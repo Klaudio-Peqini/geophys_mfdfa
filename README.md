@@ -348,6 +348,16 @@ python analyze_seismic_multifractal.py \
   --out results_mag5_1970_2020
 ```
 
+## What you’ll get in the output folder
+
+```
+- binned_series.csv, binned_series.png
+- acf.csv, acf.png
+- mfdfa_Fq.csv, mfdfa_Fq.png
+- multifractal_spectrum.csv, spectrum.png
+- summary.json
+```
+(parameters + key spectrum summaries)
 
 
 ---
