@@ -355,10 +355,8 @@ python analyze_seismic_multifractal.py \
 - acf.csv, acf.png
 - mfdfa_Fq.csv, mfdfa_Fq.png
 - multifractal_spectrum.csv, spectrum.png
-- summary.json
+- summary.json (parameters + key spectrum summaries)
 ```
-(parameters + key spectrum summaries)
-
 
 ---
 
