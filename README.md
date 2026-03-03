@@ -307,6 +307,13 @@ The mock data have a structure that mimics the real data from geophysical source
 
 ---
 
+# How to run the file in the main branch
+
+
+
+
+---
+
 # Reproducibility & Philosophy
 
 This project emphasizes:
