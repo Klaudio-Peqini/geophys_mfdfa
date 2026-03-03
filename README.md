@@ -1,4 +1,3 @@
-
 # geomag-seismic-multifractal
 
 A research-oriented Python toolkit for **multifractal analysis**, **long-range correlation analysis**, and **scaling diagnostics** applied to:
