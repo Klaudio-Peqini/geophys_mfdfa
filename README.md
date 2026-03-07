@@ -4,7 +4,8 @@ A research-oriented Python toolkit for **multifractal analysis**, **long-range c
 
 - 🌍 Geomagnetic time series (paleointensity, VADM, RPI, secular variation)
 - 🌋 Seismic catalogs (event counts, magnitudes, energy release, inter-event times)
-- Geophysical catalogs of various types
+- <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/27de1aba-4deb-4a60-8ac7-1ca89627d0c7" />
+Geophysical catalogs of various types
 
 The package implements:
 
