@@ -394,7 +394,7 @@ python analyze_seismic_multifractal_improved.py \
 7) Energy for magnitudes greater than 5.0
 ```
 python analyze_seismic_multifractal_improved.py \
-  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_energy_maggt5_1D \
   --bin 1D \
   --series energy \
@@ -407,7 +407,7 @@ python analyze_seismic_multifractal_improved.py \
 8) Energy for magnitudes greater than 5.5, binned every 7 days
 ```
 python analyze_seismic_multifractal_improved.py \
-  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_energy_maggt5p5_7D \
   --bin 7D \
   --series energy \
@@ -418,8 +418,9 @@ python analyze_seismic_multifractal_improved.py \
   --n_shuffles 20
 ```
 9) Counts for magnitudes greater than a threshold
+```
 python analyze_seismic_multifractal_improved.py \
-  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_counts_maggt5_1D \
   --bin 1D \
   --series counts \
@@ -428,9 +429,11 @@ python analyze_seismic_multifractal_improved.py \
   --qmin -30 --qmax 30 --qstep 1 \
   --acf_shuffle_band \
   --n_shuffles 20
-7) Mean magnitude per 3 days for events above 4.5
+```
+10) Mean magnitude per 3 days for events above 4.5
+```
 python analyze_seismic_multifractal_improved.py \
-  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_meanmag_maggt4p5_3D \
   --bin 3D \
   --series meanmag \
@@ -438,6 +441,7 @@ python analyze_seismic_multifractal_improved.py \
   --qmin -30 --qmax 30 --qstep 1 \
   --acf_shuffle_band \
   --n_shuffles 20
+```
 8) Restrict to a specific time interval as well
 python analyze_seismic_multifractal_improved.py \
   --catalog eq_data_earthquake_reviewed_mag4.csv \
