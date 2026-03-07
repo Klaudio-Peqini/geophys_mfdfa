@@ -404,7 +404,8 @@ python analyze_seismic_multifractal_improved.py \
   --acf_shuffle_band \
   --n_shuffles 20
 ```
-5) Energy for magnitudes greater than 5.5, binned every 7 days
+8) Energy for magnitudes greater than 5.5, binned every 7 days
+```
 python analyze_seismic_multifractal_improved.py \
   --catalog eq_data_earthquake_reviewed_mag4.csv \
   --out results_energy_maggt5p5_7D \
@@ -415,7 +416,8 @@ python analyze_seismic_multifractal_improved.py \
   --qmin -30 --qmax 30 --qstep 1 \
   --acf_shuffle_band \
   --n_shuffles 20
-6) Counts for magnitudes greater than a threshold
+```
+9) Counts for magnitudes greater than a threshold
 python analyze_seismic_multifractal_improved.py \
   --catalog eq_data_earthquake_reviewed_mag4.csv \
   --out results_counts_maggt5_1D \
