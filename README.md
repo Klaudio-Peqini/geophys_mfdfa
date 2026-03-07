@@ -355,6 +355,18 @@ python analyze_seismic_multifractal.py \
   --part_start 1980-01-01 \
   --part_end 2000-12-31
 ```
+4) Energy per 1 day
+```
+python analyze_seismic_multifractal_improved.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_1D \
+  --bin 1D \
+  --series energy \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+```
 
 ## What you’ll get in the output folder
 
