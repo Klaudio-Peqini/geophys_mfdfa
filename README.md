@@ -316,7 +316,7 @@ The Python script in the main branch constructs the multifractal spectrum for th
 
 1) Counts per day
 ```
-python analyze_seismic_multifractal_improved.py \
+python analyze_seismic_multifractal.py \
   --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_counts_1D \
   --bin 1D \
@@ -329,7 +329,7 @@ python analyze_seismic_multifractal_improved.py \
 ```
 2) Temporal evolution of selected h(q)
 ```   
-python analyze_seismic_multifractal_improved.py \
+python analyze_seismic_multifractal.py \
   --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_windowed \
   --bin 1D \
@@ -339,17 +339,16 @@ python analyze_seismic_multifractal_improved.py \
   --window_step_bins 365 \
   --window_q_values 0 2 5
 ```
-3) Restrict to a time interval or magnitude band
+3) For a given subperiod
 ```
 python analyze_seismic_multifractal.py \
-  --catalog /mnt/data/eq_data_earthquake_reviewed_mag4.csv \
+  --catalog /file/to/path/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_subperiod \
   --bin 1D \
-  --series counts \
-  --magmin 5.0 \
-  --start 1970-01-01 \
-  --end 2020-12-31 \
+  --series energy \
   --log1p \
-  --out results_mag5_1970_2020
+  --part_start 1980-01-01 \
+  --part_end 2000-12-31
 ```
 
 ## What you’ll get in the output folder
