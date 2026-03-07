@@ -471,14 +471,10 @@ python analyze_seismic_multifractal.py \
   --acf_shuffle_band \
   --n_shuffles 20
 ```
-10) Temporal evolution of 
-h(q)
-h(q) for energy
-
-Example: 10-year windows stepped by 1 year for daily bins:
-
-python analyze_seismic_multifractal_improved.py \
-  --catalog eq_data_earthquake_reviewed_mag4.csv \
+13) Temporal evolution of $h(q)$ for energy. Example: 10-year windows stepped by 1 year for daily bins:
+```
+python analyze_seismic_multifractal.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
   --out results_energy_windowed \
   --bin 1D \
   --series energy \
@@ -487,7 +483,7 @@ python analyze_seismic_multifractal_improved.py \
   --window_size_bins 3650 \
   --window_step_bins 365 \
   --window_q_values 0 2 5 10
-
+```
 
 
 ## What you’ll get in the output folder
