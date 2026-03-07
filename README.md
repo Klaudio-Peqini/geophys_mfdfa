@@ -314,16 +314,18 @@ The Python script in the main branch constructs the multifractal spectrum for th
 - Energy for M > 4 (the whole catalogue)
 - M > 5 earthquakes
 
-1) Counts per day (good first pass)
+1) Counts per day
 ```
-python analyze_seismic_multifractal.py \
-  --catalog /mnt/data/eq_data_earthquake_reviewed_mag4.csv \
+python analyze_seismic_multifractal_improved.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_counts_1D \
   --bin 1D \
   --series counts \
   --log1p \
-  --maxlag 400 \
-  --out results_counts_1D \
-  --precomputed_corr /mnt/data/eq_self_singlepair_19680831_W3350_perwin_selflag_singlepair.csv
+  --qmin -30 --qmax 30 --qstep 1 \
+  --fit_smin 121 \
+  --acf_shuffle_band \
+  --n_shuffles 20
 ```
 2) Energy proxy per day (often more “physical” than counts)
 ```   
