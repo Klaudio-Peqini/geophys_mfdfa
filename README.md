@@ -187,7 +187,7 @@ res = mfdfa(x, scales=scales, qs=np.linspace(-5,5,21), poly_order=2)
 spec = legendre_spectrum(res.qs, res.hq)
 ```
 
-Two cautions for $q$-range:
+### Two cautions for $q$-range:
 
 - It is mathematically possible $q∈[−30,30]$, but in seismic count catalogues, the negative side can become very unstable because tiny local variances dominate
 - For publication-quality results, I would still compare the full range against a conservative range such as $[−5,5]$, or $[−10,10]$.
