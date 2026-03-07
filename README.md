@@ -485,6 +485,11 @@ python analyze_seismic_multifractal.py \
   --window_q_values 0 2 5 10
 ```
 
+### Take notice:
+- It is mathematically possible to run for $q∈[−30,30]$, but in seismic count series the negative side can become very unstable because tiny local variances dominate.
+- For publication-quality results, a conservative range such as $[−5,5]$, or $[−10,10]$ is reccomended.
+- 
+
 
 ## What you’ll get in the output folder
 
