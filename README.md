@@ -488,8 +488,10 @@ python analyze_seismic_multifractal.py \
 ### Take notice:
 - It is mathematically possible to run for $q∈[−30,30]$, but in seismic count series the negative side can become very unstable because tiny local variances dominate.
 - For publication-quality results, a conservative range such as $[−5,5]$, or $[−10,10]$ is reccomended.
-- 
+- Use --log1p almost always for --series energy.
+- For sparse subsets such as ```--magmin 5.5``` or higher, try ```--bin 3D``` or ```--bin 7D``` as well, because daily bins can become too sparse.
 
+---
 
 ## What you’ll get in the output folder
 
