@@ -367,6 +367,121 @@ python analyze_seismic_multifractal_improved.py \
   --acf_shuffle_band \
   --n_shuffles 20
 ```
+5) Energy per 3 days
+```
+python analyze_seismic_multifractal_improved.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_3D \
+  --bin 3D \
+  --series energy \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+```
+6) Energy per 7 days
+```
+python analyze_seismic_multifractal_improved.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_7D \
+  --bin 7D \
+  --series energy \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+```
+7) Energy for magnitudes greater than 5.0
+```
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_maggt5_1D \
+  --bin 1D \
+  --series energy \
+  --magmin 5.0 \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+```
+5) Energy for magnitudes greater than 5.5, binned every 7 days
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_maggt5p5_7D \
+  --bin 7D \
+  --series energy \
+  --magmin 5.5 \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+6) Counts for magnitudes greater than a threshold
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_counts_maggt5_1D \
+  --bin 1D \
+  --series counts \
+  --magmin 5.0 \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+7) Mean magnitude per 3 days for events above 4.5
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_meanmag_maggt4p5_3D \
+  --bin 3D \
+  --series meanmag \
+  --magmin 4.5 \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+8) Restrict to a specific time interval as well
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_1D_1980_2020_maggt5 \
+  --bin 1D \
+  --series energy \
+  --magmin 5.0 \
+  --start 1980-01-01 \
+  --end 2020-12-31 \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+9) Add a selected fitting range for the MFDFA lines
+
+If you already know the physically meaningful scaling region:
+
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_1D_fit \
+  --bin 1D \
+  --series energy \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --fit_smin 121 \
+  --fit_smax 4113 \
+  --acf_shuffle_band \
+  --n_shuffles 20
+10) Temporal evolution of 
+h(q)
+h(q) for energy
+
+Example: 10-year windows stepped by 1 year for daily bins:
+
+python analyze_seismic_multifractal_improved.py \
+  --catalog eq_data_earthquake_reviewed_mag4.csv \
+  --out results_energy_windowed \
+  --bin 1D \
+  --series energy \
+  --log1p \
+  --qmin -30 --qmax 30 --qstep 1 \
+  --window_size_bins 3650 \
+  --window_step_bins 365 \
+  --window_q_values 0 2 5 10
+
+
 
 ## What you’ll get in the output folder
 
