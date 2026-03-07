@@ -327,15 +327,17 @@ python analyze_seismic_multifractal_improved.py \
   --acf_shuffle_band \
   --n_shuffles 20
 ```
-2) Energy proxy per day (often more “physical” than counts)
+2) Temporal evolution of selected h(q)
 ```   
-python analyze_seismic_multifractal.py \
-  --catalog /mnt/data/eq_data_earthquake_reviewed_mag4.csv \
+python analyze_seismic_multifractal_improved.py \
+  --catalog /path/to/file/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_windowed \
   --bin 1D \
-  --series energy \
+  --series counts \
   --log1p \
-  --maxlag 400 \
-  --out results_energy_1D
+  --window_size_bins 3650 \
+  --window_step_bins 365 \
+  --window_q_values 0 2 5
 ```
 3) Restrict to a time interval or magnitude band
 ```
