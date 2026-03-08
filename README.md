@@ -309,10 +309,8 @@ The mock data have a structure that mimics the real data from geophysical source
 
 # How to run the analysis Python file in the main branch?
 
-The Python script in the main branch constructs the multifractal spectrum for three case:
-- Counts for M > 4 (the whole catalogue)
-- Energy for M > 4 (the whole catalogue)
-- M > 5 earthquakes
+The Python script in the main branch constructs the multifractal spectrum,
+as well as calculates other quantities, for multiple cases:
 
 1) Counts per day
 ```
