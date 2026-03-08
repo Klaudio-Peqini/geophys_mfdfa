@@ -477,6 +477,25 @@ python analyze_seismic_multifractal.py \
   --window_step_bins 365 \
   --window_q_values 0 2 5 10
 ```
+14) Full analysis of all relevant multifractal quantities, like $Δh(t)$, or $Δα(t)$
+```
+python analyze_seismic_multifractal.py \
+  --catalog /file/to/path/eq_data_earthquake_reviewed_mag4.csv \
+  --out results_seismic_full \
+  --bin 1D \
+  --series energy \
+  --log1p \
+  --qmin -10 --qmax 10 --qstep 1 \
+  --fit_smin 121 \
+  --fit_smax 4113 \
+  --maxlag 365 \
+  --acf_shuffle_band \
+  --acf_shuffle_count 200 \
+  --n_shuffles 50 \
+  --window_size_bins 3650 \
+  --window_step_bins 365 \
+  --window_q_values 0 1 2 3 4 5
+```
 
 ### Take notice:
 - It is mathematically possible to run for $q∈[−30,30]$, but in seismic count series the negative side can become very unstable because tiny local variances dominate.
