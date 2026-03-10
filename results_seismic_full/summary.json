@@ -1,0 +1,89 @@
+{
+  "catalog": "/home/klaudio/Projects/geomag-seismic-multifractal/data/seismic/eq_data_earthquake_reviewed_mag4.csv",
+  "out": "/home/klaudio/Projects/geomag-seismic-multifractal/results_seismic_full",
+  "bin": "1D",
+  "series": "energy",
+  "filters": {
+    "magmin": null,
+    "magmax": null,
+    "start": null,
+    "end": null,
+    "latmin": null,
+    "latmax": null,
+    "lonmin": null,
+    "lonmax": null
+  },
+  "subperiod": {
+    "part_start": null,
+    "part_end": null
+  },
+  "preprocess": {
+    "log1p": true,
+    "standardize": true,
+    "detrend": "none"
+  },
+  "acf": {
+    "maxlag_bins": 365,
+    "white_noise_95_band": 0.009134080456134,
+    "used_shuffle_band": true,
+    "acf_shuffle_count": 200
+  },
+  "mfdfa": {
+    "poly_order": 1,
+    "qmin": -10.0,
+    "qmax": 10.0,
+    "qstep": 1.0,
+    "var_floor": 1e-30,
+    "scales": [
+      16,
+      27,
+      44,
+      73,
+      121,
+      201,
+      333,
+      553,
+      917,
+      1521,
+      2522,
+      4184,
+      6940,
+      11511
+    ],
+    "fit_range": [
+      121,
+      4113
+    ]
+  },
+  "windowed_hq": {
+    "enabled": true,
+    "window_size_bins": 3650,
+    "window_step_bins": 365,
+    "window_q_values": [
+      0.0,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0
+    ]
+  },
+  "shuffle_test": {
+    "n_shuffles": 50,
+    "seed": 42,
+    "mean_shuffled_width": 0.09768984102642979,
+    "std_shuffled_width": 0.048987893451497275,
+    "p_value_width_ge_real": 0.02
+  },
+  "phase_surrogate_test": {
+    "n_phase_surrogates": 0
+  },
+  "spectrum_summary": {
+    "H_h2": 0.828407409402492,
+    "h0": 0.7390321014749199,
+    "h2": 0.828407409402492,
+    "spectrum_width_alpha": 0.22877560081568205,
+    "alpha_at_fmax": 0.8584779898065071,
+    "falpha_max": 1.0607120103513235
+  }
+}
