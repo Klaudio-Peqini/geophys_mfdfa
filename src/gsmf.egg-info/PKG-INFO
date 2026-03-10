@@ -1,0 +1,96 @@
+Metadata-Version: 2.4
+Name: gsmf
+Version: 0.1.0
+Summary: Geomag–Seismic Multifractal analysis toolkit (MFDFA, structure functions, spectrum, cross-MFDFA).
+Author: Klaudio Peqini
+License: MIT
+Keywords: multifractal,MFDFA,geomagnetism,seismology,time-series
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy>=1.22
+Requires-Dist: pandas>=1.5
+Requires-Dist: scipy>=1.9
+Requires-Dist: matplotlib>=3.6
+Provides-Extra: dev
+Requires-Dist: pytest>=7; extra == "dev"
+Requires-Dist: ruff>=0.4; extra == "dev"
+Requires-Dist: mypy>=1.5; extra == "dev"
+Dynamic: license-file
+
+# geomag-seismic-multifractal
+
+A lightweight, research-friendly Python package to perform **multifractal analysis** (MFDFA, structure functions, spectrum, cross-MFDFA) and **correlation/autocorrelation** analysis on geomagnetic and seismic time series.
+
+---
+
+## Why `pandas`?
+
+Your inputs are CSV time series and event catalogs. **pandas** makes it robust to parse timestamps, resample irregular events into evenly sampled series (counts per hour/day), and align multiple signals on time. Core algorithms are implemented in **numpy**.
+
+---
+
+## Install
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e .
+```
+
+---
+
+## Quick start (your seismic example)
+
+```python
+import numpy as np
+from gsmf.io import load_earthquake_catalog, events_to_counts
+from gsmf.analysis import autocorrelation
+from gsmf.multifractal import mfdfa, legendre_spectrum
+
+cat = load_earthquake_catalog("data/seismic/eq_data_earthquake_reviewed_mag4.csv")
+x = events_to_counts(cat, freq="1D").values
+
+acf = autocorrelation(x, max_lag=365, method="fft")
+
+scales = np.unique(np.logspace(np.log10(16), np.log10(2048), 20).astype(int))
+res = mfdfa(x, scales=scales, qs=np.linspace(-5,5,21), poly_order=2)
+spec = legendre_spectrum(res.qs, res.hq)
+```
+
+---
+
+## CLI
+
+```bash
+gsmf-quick --catalog data/seismic/eq_data_earthquake_reviewed_mag4.csv --freq 1D --max-lag 365 --out-prefix results/tables/quick
+```
+
+This writes CSV outputs into `results/tables/`.
+
+See `data/README.md` for file formats.
+
+---
+
+## Plotting
+
+The plotting helpers live in `gsmf.plotting` and use **matplotlib**.
+
+Example: plot an ACF in a style similar to your figure (purple plus markers):
+
+```python
+import matplotlib.pyplot as plt
+from gsmf.analysis import autocorrelation
+from gsmf.plotting import plot_acf
+
+acf = autocorrelation(x, max_lag=18000, method="fft")
+plot_acf(acf, style="m-", marker="+", markersize=4, linewidth=1.0)
+plt.show()
+```
+
+Other helpers:
+- `plot_mfdfa_Fq(res)`
+- `plot_hq(res)`
+- `plot_spectrum(spec)`
+- `plot_structure_functions(sf_res)`

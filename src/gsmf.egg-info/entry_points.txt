@@ -1,0 +1,2 @@
+[console_scripts]
+gsmf-quick = gsmf.__main__:main
