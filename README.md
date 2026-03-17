@@ -509,6 +509,12 @@ python analyze_seismic_multifractal.py \
 
 A GitHub-ready subfolder for systematic seismic multifractal analysis.
 
+
+```
+geomag-seismic-multifractal/
+└── seismic_multifractal_scan/
+```
+
 ### Contents
 
 - `analyze_seismic_multifractal.py`
