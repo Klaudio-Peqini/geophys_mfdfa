@@ -535,6 +535,18 @@ For each selected parameter combination, it:
 6. appends a single summary row to:
    - `scan_outputs/all_parameter_scan_results.csv`
 
+### Required input
+
+Place your catalog CSV in the same folder, for example:
+
+- `eq_data_earthquake_reviewed_mag4.csv`
+
+### Quick start
+
+```bash
+source run_seismic_parameter_scan.sh
+```
+
 ---
 
 ## What you’ll get in the output folder
