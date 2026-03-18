@@ -66,7 +66,7 @@ for bin in "${BINS[@]}"; do
           echo "============================================================"
 
           cmd=(
-            python "${SCRIPT}"
+            python3 "${SCRIPT}"
             --catalog "${CATALOG}"
             --out "${outdir}"
             --bin "${bin}"
