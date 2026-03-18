@@ -555,6 +555,43 @@ source run_seismic_parameter_scan.sh
 
 ---
 
+## Parallel scanning parameters space
+
+Parallel parameter-space scan utilities for seismic multifractal analysis.
+
+### Files
+
+In the respective README.md file are shown details regarding
+the content of the folder and the mode of use of each.
+
+### Output:
+
+- delta_h_h0_h5.csv
+- delta_h_h0_h5.png
+- one run_summary.csv per run
+- merged .csv file
+
+### Recommended usage
+
+```
+source run_parallel_scan.sh # run all the created jobs
+source merge_summaries.sh # merges all the output files into one .csv
+```
+
+### recommended for parallel run
+
+For a 16-thread machine, start with:
+
+```
+JOBS=8
+```
+
+inside run_parallel_scan.sh. Then, if the machine remains comfortable
+in RAM and I/O usage, try 10 or 12. If the scripts are run in a cluster,
+make use of the threads appropriately.
+
+---
+
 ## What you’ll get in the output folder
 
 ```
