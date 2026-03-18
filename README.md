@@ -509,7 +509,6 @@ python analyze_seismic_multifractal.py \
 
 A GitHub-ready subfolder for systematic seismic multifractal analysis.
 
-
 ```
 geomag-seismic-multifractal/
 └── seismic_multifractal_scan/
@@ -558,6 +557,11 @@ source run_seismic_parameter_scan.sh
 ## Parallel scanning parameters space
 
 Parallel parameter-space scan utilities for seismic multifractal analysis.
+
+```
+geomag-seismic-multifractal/
+└── seismic_multifractal_parallel_scan/
+```
 
 ### Files
 
