@@ -87,7 +87,7 @@ for bin in "${BINS[@]}"; do
 
           "${cmd[@]}"
 
-          python aggregate_seismic_results.py             --run_dir "${outdir}"             --master_csv "${MASTER_CSV}"             --run_id "${run_id}"             --bin "${bin}"             --series "${series}"             --magmin "${magmin}"             --window_size_bins "${win}"             --window_step_bins "${step}"             --qmin "${QMIN}"             --qmax "${QMAX}"             --qstep "${QSTEP}"             --fit_smin "${fit_smin}"             --fit_smax "${fit_smax}"
+          python3 aggregate_seismic_results.py             --run_dir "${outdir}"             --master_csv "${MASTER_CSV}"             --run_id "${run_id}"             --bin "${bin}"             --series "${series}"             --magmin "${magmin}"             --window_size_bins "${win}"             --window_step_bins "${step}"             --qmin "${QMIN}"             --qmax "${QMAX}"             --qstep "${QSTEP}"             --fit_smin "${fit_smin}"             --fit_smax "${fit_smax}"
 
           run_counter=$((run_counter + 1))
         done
