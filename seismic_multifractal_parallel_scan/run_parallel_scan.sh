@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #set -euo pipefail
-set -uo pipefall
+set -uo pipefail
 
 # For a 16-thread machine, a good starting point is 8 parallel jobs.
 JOBS=12
