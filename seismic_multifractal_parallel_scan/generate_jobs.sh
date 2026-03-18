@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
+#set -euo pipefail
+set -uo pipefail
 
 SCRIPT="./analyze_seismic_multifractal.py"
 CATALOG="./eq_data_earthquake_reviewed_mag4.csv"
@@ -58,7 +59,7 @@ for bin in "${BINS[@]}"; do
           run_id=$(printf "run_%04d" "${run_counter}")
           outdir="${BASE_OUT}/${run_id}_${series}_${bin}_w${win}_s${step}_m${magmin}"
 
-          cmd="python ${SCRIPT} \
+          cmd="python3 ${SCRIPT} \
             --catalog ${CATALOG} \
             --out ${outdir} \
             --bin ${bin} \
@@ -76,7 +77,7 @@ for bin in "${BINS[@]}"; do
             cmd="${cmd} --magmin ${magmin}"
           fi
 
-          cmd="${cmd} && python ./aggregate_seismic_results.py \
+          cmd="${cmd} && python3 ./aggregate_seismic_results.py \
             --run_dir ${outdir} \
             --run_id ${run_id} \
             --bin ${bin} \
