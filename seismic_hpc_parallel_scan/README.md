@@ -1,5 +1,4 @@
-# seismic-parallel-refactor
-
+# seismic-parallel-hpc
 A refactored workflow for running large multifractal seismic parameter scans efficiently on a laptop, workstation, or HPC node.
 
 This folder is designed to be copied directly into a GitHub repository. Its purpose is not only to run the scan, but also to make the **parallelization logic explicit and reproducible**.
