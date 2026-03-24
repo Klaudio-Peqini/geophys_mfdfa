@@ -607,6 +607,33 @@ make use of the threads appropriately.
 ```
 
 ---
+## seismic-parallel-hpc
+
+A refactored workflow for running large multifractal seismic parameter scans efficiently on a laptop, workstation, or HPC node.
+This folder is designed to be copied directly into a GitHub repository. Its purpose is not only to run the scan, but also to make the **parallelization logic explicit and reproducible**.
+
+### Why this refactor was needed
+
+In the original workflow, each parallel job was doing much more than the scientifically essential work:
+
+- re-reading the same earthquake catalog CSV,
+- re-parsing timestamps,
+- re-filtering and re-binning the same series,
+- recomputing some windowed quantities twice,
+- producing many PNG files per run,
+- and then re-reading intermediate CSV files again during aggregation.
+
+When this is repeated across a large parameter grid, the wall time starts to be dominated not only by the MFDFA itself, but also by repeated **I/O**, repeated **preprocessing**, and repeated **postprocessing**.
+
+The refactor therefore applies three main principles:
+
+1. **Cache once, reuse many times**.
+2. **Keep one analysis job single-threaded internally**.
+3. **Parallelize at the job level, not inside every numerical kernel**.
+
+For more details, please refer to the README.md file in the folder.
+
+---
 
 # Reproducibility & Philosophy
 
