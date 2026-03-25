@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OUT="scan_outputs/all_parameter_scan_results.csv"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+OUT="${OUT:-${HERE}/scan_outputs/all_parameter_scan_results.csv}"
 mkdir -p "$(dirname "${OUT}")"
 
-mapfile -t files < <(find scan_outputs -name run_summary.csv -print | sort)
+mapfile -t files < <(find "${HERE}/scan_outputs" -name run_summary.csv -print | sort)
 if [[ ${#files[@]} -eq 0 ]]; then
   echo "No run_summary.csv files were found under scan_outputs/."
   exit 1

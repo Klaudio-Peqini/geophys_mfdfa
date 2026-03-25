@@ -1,163 +1,109 @@
-# seismic-parallel-hpc
-A refactored workflow for running large multifractal seismic parameter scans efficiently on a laptop, workstation, or HPC node.
+# seismic_hpc_pipeline_mature
 
-This folder is designed to be copied directly into a GitHub repository. Its purpose is not only to run the scan, but also to make the **parallelization logic explicit and reproducible**.
+A mature HPC/scientific pipeline for multifractal analysis of seismic catalogs with:
 
----
+- cached binned-series reuse
+- duplicate-free windowed metrics
+- adaptive hybrid parallelism driven by `window_step_bins`
+- full timing instrumentation
+- resumable scans with skipped completed runs
+- failed-job retry support
+- environment capture for reproducibility
+- benchmark and load-analysis tooling
 
-## 1. Why this refactor was needed
-
-In the original workflow, each parallel job was doing much more than the scientifically essential work:
-
-- re-reading the same earthquake catalog CSV,
-- re-parsing timestamps,
-- re-filtering and re-binning the same series,
-- recomputing some windowed quantities twice,
-- producing many PNG files per run,
-- and then re-reading intermediate CSV files again during aggregation.
-
-When this is repeated across a large parameter grid, the wall time starts to be dominated not only by the MFDFA itself, but also by repeated **I/O**, repeated **preprocessing**, and repeated **postprocessing**.
-
-The refactor therefore applies three main principles:
-
-1. **Cache once, reuse many times**.
-2. **Keep one analysis job single-threaded internally**.
-3. **Parallelize at the job level, not inside every numerical kernel**.
-
----
-
-## 2. Folder contents
+## Folder contents
 
 ```text
-seismic_parallel_refactor/
+seismic_hpc_pipeline_mature/
 ├── analyze_seismic_multifractal_fast.py
 ├── prepare_binned_series_cache.py
 ├── aggregate_seismic_results.py
 ├── generate_jobs.sh
 ├── run_parallel_scan.sh
 ├── merge_summaries.sh
+├── sample_cpu_load.sh
+├── sweep_job_counts.sh
+├── analyze_benchmark_and_loads.py
 ├── requirements.txt
-├── .gitignore
 └── README.md
 ```
 
-### Main role of each file
+## What changed in this mature version
 
-- `analyze_seismic_multifractal_fast.py`  
-  Main optimized analysis script. It can work either from the raw earthquake catalog or from a precomputed cached series.
+### 1. No duplicated scientific work in windowed analysis
+All windowed quantities are computed in a single pass and then reused for:
 
-- `prepare_binned_series_cache.py`  
-  Builds the reusable cached time series for each `(bin, series, magmin)` combination.
+- `h(q)` per window
+- `Δh(t)` via `h(0,t) - h(5,t)`
+- `Δα(t)`
+- `windowed_hq.csv`
+- plots
+- run summaries
 
-- `aggregate_seismic_results.py`  
-  Produces a compact one-row summary for each run without doing any redundant plotting.
+There is no second pass that recomputes the same windows just to obtain derived quantities.
 
-- `generate_jobs.sh`  
-  Generates `jobs.txt` after first building the reusable cache.
+### 2. Adaptive hybrid parallel policy
+The pipeline distinguishes between two execution modes:
 
-- `run_parallel_scan.sh`  
-  Executes the jobs with GNU parallel, while forcing NumPy/BLAS backends to stay single-threaded per job.
+- **job-level mode** for larger `window_step_bins`
+- **hybrid mode** for denser windows (`window_step_bins <= ADAPTIVE_WINDOW_THRESHOLD`)
 
-- `merge_summaries.sh`  
-  Merges all run summaries into one CSV file.
+By default:
 
----
+- large steps stay in the GNU Parallel outer-job queue
+- dense steps are assigned to a hybrid queue and also receive a nontrivial `--window-workers` value inside Python
 
-## 3. What changed relative to the original workflow
+This prevents wasting inner-worker overhead on coarse jobs while accelerating dense-window runs.
 
-### 3.1 Cached input series
+### 3. Full timing instrumentation
+Each run writes detailed timing information into `summary.json`, including:
 
-The parameter grid varies mainly in:
+- cache or catalog loading
+- catalog filtering
+- series building
+- series export
+- series plotting
+- preprocessing
+- ACF computation / writing / plotting
+- full-series MFDFA computation / writing / plotting
+- spectrum computation / writing / plotting
+- windowed computation / writing / plotting
+- summary writing
+- total runtime
 
-- MFDFA fitting range,
-- window size,
-- window step,
-- number of shuffles,
-- and output directory.
+### 4. Resume and failure recovery
+Completed runs are skipped automatically when these files exist:
 
-However, the binned seismic series depends only on:
+- `summary.json`
+- `run_summary.csv`
+- `run_complete.ok`
 
-- `bin`,
-- `series`,
-- `magmin`.
+The launcher also writes job logs and retries failed jobs once with GNU Parallel `--resume-failed`.
 
-So instead of rebuilding the same binned series for every run, this refactor computes it once and stores it in:
+### 5. Reproducibility capture
+Each run stores:
 
-```text
-cache_series/series_<series>_<bin>_m<magmin>.csv
-```
+- `environment.json`
+- `summary.json["environment"]`
 
-This turns repeated catalog parsing and repeated resampling into a one-time cost.
+The launcher also writes:
 
-### 3.2 Python interpreter consistency
+- `scan_outputs/pipeline_environment.json`
 
-All shell scripts now use `python3`, not `python`.
+These capture machine and software details such as Python version, package versions, hostname, and thread-related environment variables.
 
-This matters on clusters because:
-
-- `python` may not exist,
-- it may point to Python 2,
-- or it may refer to a different environment than the one used interactively.
-
-### 3.3 Safe shell behavior
-
-The old launcher had a typo in the shell flags. The refactor uses:
-
-```bash
-set -euo pipefail
-```
-
-consistently.
-
-### 3.4 Prevent hidden oversubscription
-
-In job-level parallel scans, NumPy, OpenBLAS, MKL, or NumExpr may try to use multiple threads **inside each job**. That creates hidden oversubscription.
-
-For example, on a 16-thread machine:
-
-- 12 GNU parallel jobs × 4 BLAS threads/job = 48 runnable threads,
-- which causes context switching, cache pressure, and slower runtimes.
-
-The new launcher forces:
+### 6. Production mode includes step = 1 day
+The default job generator now includes:
 
 ```bash
-export OMP_NUM_THREADS=1
-export OPENBLAS_NUM_THREADS=1
-export MKL_NUM_THREADS=1
-export NUMEXPR_NUM_THREADS=1
-export VECLIB_MAXIMUM_THREADS=1
+WINDOW_STEPS=(365 182 30 7 1)
 ```
 
-This is one of the most important practical changes.
+so dense one-bin sliding-window scans are part of the normal production workflow.
 
-### 3.5 No duplicate windowed recomputation
+## Quick start
 
-The original workflow computed windowed `h(q)` once, then later computed windowed `Δα` by running another full window loop. In the refactored code, both are extracted from the **same window pass**.
-
-### 3.6 Lighter aggregation
-
-The old aggregation script reopened `windowed_hq.csv`, rebuilt `Δh`, and regenerated a plot. In the refactor, the main analysis script already writes the relevant summary CSVs, and the aggregator only collects numerical summaries.
-
-### 3.7 Timing instrumentation
-
-Each run now records timing blocks in `summary.json`, for example:
-
-- catalog loading,
-- series building,
-- preprocessing,
-- ACF block,
-- main MFDFA block,
-- windowed block,
-- shuffle block,
-- total runtime.
-
-This makes future bottleneck studies much easier.
-
----
-
-## 4. Installation
-
-Create and activate a virtual environment:
+### 1. Create the environment
 
 ```bash
 python3 -m venv .venv
@@ -166,271 +112,197 @@ pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Install GNU parallel if needed:
+Install GNU Parallel if needed:
 
 ```bash
 sudo apt install parallel
 ```
 
----
+### 2. Put the catalog in the folder
 
-## 5. Expected external prerequisites
-
-Before running the scan, make sure the machine already has:
-
-- Python 3
-- `bash`
-- GNU `parallel`
-- enough free disk space for `scan_outputs/`
-- enough memory for several concurrent Python jobs
-
-For cluster runs, also make sure that:
-
-- the same Python environment is visible from the working directory,
-- `python3` is on `PATH`,
-- and the node-local or shared filesystem can handle many concurrent writes.
-
----
-
-## 6. Input file expected by default
-
-The default scripts assume the earthquake catalog is named:
+Expected default name:
 
 ```text
 eq_data_earthquake_reviewed_mag4.csv
 ```
 
-in the same directory as the scripts.
-
-The catalog must contain at least:
-
-- `time`
-- `mag`
-
-and optionally:
-
-- `latitude`
-- `longitude`
-
-The current timestamp parser expects the format:
-
-```text
-YYYY-MM-DD HH:MM:SS
-```
-
-in UTC-style processing.
-
----
-
-## 7. Running the full workflow
-
-### Step 1: generate the cached series and jobs
+### 3. Generate jobs
 
 ```bash
 bash generate_jobs.sh
 ```
 
-This will:
-
-1. create `cache_series/`
-2. generate the reusable binned series
-3. create `jobs.txt`
-
-### Step 2: execute in parallel
+### 4. Run the scan
 
 ```bash
 bash run_parallel_scan.sh
 ```
 
-By default:
-
-- `THREADS=$(nproc)`
-- `JOBS=THREADS/2`
-
-You can override this manually:
-
-```bash
-JOBS=8 THREADS=16 bash run_parallel_scan.sh
-```
-
-### Step 3: merge all summaries
+### 5. Merge summaries
 
 ```bash
 bash merge_summaries.sh
 ```
 
-Final merged output:
+The merged table is written to:
 
 ```text
 scan_outputs/all_parameter_scan_results.csv
 ```
 
----
+## Cluster usage
 
-## 8. Recommended job counts
-
-These are starting points, not rigid rules.
-
-### 16-thread laptop or workstation
-
-Start with:
+A typical cluster launch is:
 
 ```bash
-JOBS=6 bash run_parallel_scan.sh
+THREADS=48 JOBS_STANDARD=20 JOBS_HYBRID=6 bash run_parallel_scan.sh
 ```
 
-or
+Important environment defaults inside the launcher:
 
 ```bash
-JOBS=8 bash run_parallel_scan.sh
+OMP_NUM_THREADS=1
+OPENBLAS_NUM_THREADS=1
+MKL_NUM_THREADS=1
+NUMEXPR_NUM_THREADS=1
 ```
 
-### 32-thread machine
+This prevents hidden oversubscription.
 
-Start with:
+### Recommended strategy
+- For coarse scans, use a larger `JOBS_STANDARD`
+- For dense scans, keep `JOBS_HYBRID` smaller because each hybrid job can also use inner window workers
+
+## Benchmark instructions
+
+To benchmark different outer-job settings:
 
 ```bash
-JOBS=12 bash run_parallel_scan.sh
+JOB_COUNTS="4 6 8 10 12 14" \
+HYBRID_COUNTS="1 1 2 2 3 3" \
+bash sweep_job_counts.sh
 ```
 
-### Why not use all threads?
+Then analyze the results:
 
-Because each job also performs:
+```bash
+python3 analyze_benchmark_and_loads.py --bench-dir benchmarks
+```
 
-- plotting,
-- CSV writing,
-- JSON writing,
-- pandas parsing,
-- memory allocation,
-- and repeated short NumPy kernels.
+This produces:
+- scaling summaries
+- speedup and efficiency plots
+- CPU-load PDF plots
 
-These workloads are not ideal for full saturation. In practice, using about **50% to 70%** of visible threads often gives better wall-clock efficiency.
+## Important configurable variables
 
----
+### In `generate_jobs.sh`
 
-## 9. Performance logic behind the redesign
+- `WINDOW_STEPS`
+- `WINDOW_SIZES`
+- `ADAPTIVE_WINDOW_THRESHOLD`
+- `WINDOW_WORKER_CAP`
+- `SKIP_PLOTS`
+- `LIGHT_OUTPUT`
+- `SKIP_COMPLETED`
 
-### 9.1 Where the runtime really goes
+### In `run_parallel_scan.sh`
 
-For this type of workflow, the expensive parts are usually:
+- `THREADS`
+- `JOBS_STANDARD`
+- `JOBS_HYBRID`
+- `RETRY_FAILED`
+- `REBUILD_JOBS`
+- `RUN_MERGE`
 
-1. windowed MFDFA,
-2. shuffled multifractal tests,
-3. repeated detrending across many scales and windows,
-4. large numbers of PNG writes,
-5. repeated catalog loading and resampling.
+## Outputs
 
-### 9.2 Why caching helps so much
+Each run directory contains the main scientific products:
 
-Suppose many runs share the same `(bin, series, magmin)` configuration. Then the catalog-to-series transformation is identical. Recomputing it in every job wastes time and filesystem bandwidth.
-
-Caching makes the scan more similar to this logic:
-
-- **once**: raw catalog → binned signal
-- **many times**: binned signal → MFDFA parameter study
-
-This is the right separation of concerns.
-
-### 9.3 Why single-threaded jobs are better here
-
-The scan is already embarrassingly parallel at the outer level. If each job also becomes internally multi-threaded, the machine gets oversubscribed and loses efficiency.
-
-So the best strategy is usually:
-
-- **many single-threaded jobs**,
-- not **fewer multi-threaded jobs**.
-
----
-
-## 10. Output structure
-
-Each run directory inside `scan_outputs/` contains the normal scientific outputs plus timing metadata.
-
-Common files include:
-
-- `acf.csv`
-- `mfdfa_Fq.csv`
+- `summary.json`
+- `environment.json`
+- `status.json`
 - `multifractal_spectrum.csv`
 - `windowed_hq.csv`
 - `delta_h_h0_h5.csv`
 - `delta_alpha_windowed.csv`
-- `summary.json`
 - `run_summary.csv`
+- `run_complete.ok`
 
-The key new file for performance diagnosis is:
+Global files:
 
-- `summary.json`
+- `scan_outputs/all_parameter_scan_results.csv`
+- `scan_outputs/pipeline_environment.json`
 
-because it stores `timings_sec`.
+Launcher logs:
 
----
+- `joblogs/joblevel_joblog.tsv`
+- `joblogs/hybrid_joblog.tsv`
+- `joblogs/joblevel_failed_commands.txt`
+- `joblogs/hybrid_failed_commands.txt`
 
-## 11. Optional further accelerations
+## Cache files
 
-This refactor deliberately stays close to your original scientific code. If later you want even more speed, the next candidates are:
+The cache builder writes both:
 
-### A. Disable plots for the large scan
+- CSV cache files
+- compressed NPZ cache files
 
-Add `--skip-plots` to large production scans, and regenerate plots only for selected final runs.
-
-This often gives a visible speedup and reduces filesystem load.
-
-### B. Reduce `n_shuffles`
-
-Shuffles are scientifically useful, but they are expensive because each shuffle repeats a large fraction of the MFDFA pipeline.
-
-A good workflow is:
-
-- coarse scan with smaller `n_shuffles`,
-- focused reruns with larger `n_shuffles` on the best parameter regions.
-
-### C. Profile the windowed block separately
-
-Because `windowed_block_sec` is reported explicitly, you can now identify whether runtime is dominated by:
-
-- the main full-series MFDFA,
-- the moving-window study,
-- or the surrogate tests.
-
-### D. Consider algorithmic acceleration later
-
-If you need still more speed, the next serious step would be to optimize the detrending kernel itself, for example by:
-
-- reducing repeated `polyfit` calls,
-- exploiting closed-form linear detrending for `poly=1`,
-- or moving the inner loops to Numba/Cython/C++.
-
-That is a second-stage optimization. The current refactor addresses the **workflow-level bottlenecks first**, which is the correct first move.
-
----
-
-## 12. Suggested GitHub usage
-
-A good repository structure would be:
+Examples:
 
 ```text
-your_repo/
-├── seismic_parallel_refactor/
-│   ├── analyze_seismic_multifractal_fast.py
-│   ├── prepare_binned_series_cache.py
-│   ├── aggregate_seismic_results.py
-│   ├── generate_jobs.sh
-│   ├── run_parallel_scan.sh
-│   ├── merge_summaries.sh
-│   ├── requirements.txt
-│   └── README.md
-└── eq_data_earthquake_reviewed_mag4.csv
+cache_series/series_energy_1D_mnone.csv
+cache_series/series_energy_1D_mnone.npz
 ```
 
-Then from inside `seismic_parallel_refactor/` you can run the workflow directly.
+The NPZ cache is preferred because it avoids repeated CSV parsing overhead.
 
----
+## Troubleshooting
 
-## 13. Final recommendation
+### `EmptyDataError: No columns to parse from file`
+The catalog exists but is empty or invalid. Check:
 
-For your very first serious parallelization attempt, the most important lesson is this:
+```bash
+ls -lh eq_data_earthquake_reviewed_mag4.csv
+head -5 eq_data_earthquake_reviewed_mag4.csv
+```
 
-> Do not start by making every numerical kernel parallel. First separate the workflow into what is **truly variable** and what is **repeated unnecessarily**.
+### `TypeError: len() of unsized object` when reading NPZ
+Use the provided mature scripts. The NPZ loader already handles scalar and one-element metadata formats safely.
 
-That is exactly what this refactor does.
+### GNU Parallel is missing
+Install it:
 
+```bash
+sudo apt install parallel
+```
+
+### The scan reruns too much after a crash
+Set:
+
+```bash
+SKIP_COMPLETED=1
+```
+
+and rerun. Completed jobs will be skipped automatically.
+
+### Hybrid jobs overload the machine
+Lower:
+
+```bash
+JOBS_HYBRID
+```
+
+or reduce:
+
+```bash
+WINDOW_WORKER_CAP
+```
+
+## Recommended production pattern
+
+1. benchmark machine-specific `JOBS_STANDARD` and `JOBS_HYBRID`
+2. keep `SKIP_PLOTS=1` for broad sweeps
+3. use cached NPZ inputs
+4. enable `SKIP_COMPLETED=1`
+5. inspect merged summaries and rerun only specific subsets if needed
