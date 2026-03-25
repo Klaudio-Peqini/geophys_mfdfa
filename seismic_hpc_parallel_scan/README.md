@@ -33,9 +33,9 @@ seismic_hpc_pipeline/
 ### 1. No duplicated scientific work in windowed analysis
 All windowed quantities are computed in a single pass and then reused for:
 
-- `h(q)` per window
-- `Δh(t)` via `h(0,t) - h(5,t)`
-- `Δα(t)`
+- $h(q)$ per window
+- $Δh(t)$ via $h(0,t) - h(5,t)$
+- $Δα(t)$
 - `windowed_hq.csv`
 - plots
 - run summaries
