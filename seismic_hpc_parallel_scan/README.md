@@ -1,4 +1,4 @@
-# seismic_hpc_pipeline
+# seismic_hpc_parallel_scan
 
 A mature HPC/scientific pipeline for multifractal analysis of seismic catalogs with:
 
