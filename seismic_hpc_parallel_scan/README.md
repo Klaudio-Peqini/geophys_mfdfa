@@ -14,7 +14,7 @@ A mature HPC/scientific pipeline for multifractal analysis of seismic catalogs w
 ## Folder contents
 
 ```text
-seismic_hpc_pipeline/
+seismic_hpc_parallel_scan/
 ├── analyze_seismic_multifractal_fast.py
 ├── prepare_binned_series_cache.py
 ├── aggregate_seismic_results.py
