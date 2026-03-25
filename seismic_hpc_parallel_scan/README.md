@@ -1,4 +1,4 @@
-# seismic_hpc_pipeline_mature
+# seismic_hpc_pipeline
 
 A mature HPC/scientific pipeline for multifractal analysis of seismic catalogs with:
 
