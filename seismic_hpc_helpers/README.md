@@ -29,3 +29,9 @@ bash run_plots_all.sh scan_outputs plot_figures.py
 ```
 
 ---
+### 3. `package_multifractal_analysis_inputs.sh`
+Packages all relevant outputs for selected runs into a ZIP archive for detailed analysis.
+
+Includes:
+- CSV/JSON outputs
+- Generated plots
