@@ -82,3 +82,8 @@ bash package_delta_h_only.sh
 
 ---
 
+## Notes
+
+- Scripts are designed for large batch processing (100+ runs).
+- Folder naming convention `run_*` is assumed.
+- Small-shift analysis focuses on `step = 1` and `step = 7`.
