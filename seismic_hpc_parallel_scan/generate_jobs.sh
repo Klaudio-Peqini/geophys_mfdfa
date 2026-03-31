@@ -5,6 +5,8 @@ HERE="$(cd "$(dirname "$0")" && pwd)"
 
 OUTDIR="${HERE}/scan_outputs"
 CACHEDIR="${HERE}/cache_series"
+ANALYZER="${HERE}/analyze_seismic_multifractal_fast.py"
+AGGREGATOR="${HERE}/aggregate_seismic_results.py"
 
 mkdir -p "${OUTDIR}"
 
@@ -14,6 +16,10 @@ WINDOW_STEPS=(365 182 30 7 1)
 BINS=("1D" "3D" "7D")
 SERIES=("energy" "counts")
 MAGMINS=("none" "5.0")
+
+QMIN=-10
+QMAX=10
+QSTEP=1
 
 rm -f "${HERE}/jobs.txt"
 
@@ -44,7 +50,6 @@ for bin in "${BINS[@]}"; do
       csv_file="${CACHEDIR}/series_${series}_${bin}_m${mag}.csv"
       npz_file="${CACHEDIR}/series_${series}_${bin}_m${mag}.npz"
 
-      # --- cache detection ---
       if [[ -f "${csv_file}" ]]; then
         INPUT_ARG="--input-series-csv ${csv_file}"
       elif [[ -f "${npz_file}" ]]; then
@@ -63,9 +68,10 @@ for bin in "${BINS[@]}"; do
           smin=$(fit_smin_for_window "$win")
           smax=$(fit_smax_for_window "$win")
 
-          out="${OUTDIR}/run_${series}_${bin}_m${mag}_w${win}_s${step}"
+          run_id="run_${series}_${bin}_m${mag}_w${win}_s${step}"
+          out="${OUTDIR}/${run_id}"
 
-          cmd="python3 ${HERE}/analyze_seismic_multifractal_fast.py \
+          cmd="python3 ${ANALYZER} \
             ${INPUT_ARG} \
             --out ${out} \
             --bin ${bin} \
@@ -77,7 +83,20 @@ for bin in "${BINS[@]}"; do
             --window-workers 1 \
             --window-q-values 0 1 2 3 4 5 \
             --n-shuffles 20 \
-            --skip-plots"
+            --skip-plots \
+            && python3 ${AGGREGATOR} \
+            --run_dir ${out} \
+            --run_id ${run_id} \
+            --bin ${bin} \
+            --series ${series} \
+            --magmin ${mag} \
+            --window_size_bins ${win} \
+            --window_step_bins ${step} \
+            --qmin ${QMIN} \
+            --qmax ${QMAX} \
+            --qstep ${QSTEP} \
+            --fit_smin ${smin} \
+            --fit_smax ${smax}"
 
           echo "$cmd" >> "${HERE}/jobs.txt"
 
@@ -88,4 +107,4 @@ for bin in "${BINS[@]}"; do
   done
 done
 
-echo "Created jobs.txt with $(wc -l < ${HERE}/jobs.txt) runnable jobs."
+echo "Created jobs.txt with $(wc -l < "${HERE}/jobs.txt") runnable jobs."
