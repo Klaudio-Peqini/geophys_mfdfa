@@ -53,3 +53,14 @@ delta_h_h0_h5.csv
 ```
 for each selected run, preserving folder structure.
 
+Useful for:
+- fast comparative analysis
+- statistical post-processing
+
+**Usage**
+```bash
+bash package_delta_h_only.sh
+```
+
+---
+
