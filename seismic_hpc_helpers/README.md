@@ -1,4 +1,4 @@
-# HPC Helper Scripts for Multifractal Analysis                       
+# HPC Helper Scripts for Multifractal Analysis                        
 
 This folder contains utility scripts to automate plotting and packaging of results from large-scale multifractal analyses performed on HPC systems.
 
