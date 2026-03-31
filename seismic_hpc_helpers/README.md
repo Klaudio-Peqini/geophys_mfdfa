@@ -20,3 +20,12 @@ python3 plot_figures.py --input-dir path/to/run_folder
 ```
 
 ---
+### 2. `run_plots_all.sh`
+Batch script to execute `plot_figures.py` across all run folders.
+
+**Usage**
+```bash
+bash run_plots_all.sh scan_outputs plot_figures.py
+```
+
+---
