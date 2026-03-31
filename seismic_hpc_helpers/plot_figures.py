@@ -1,9 +1,9 @@
 
 #!/usr/bin/env python3
 """
-plot_weekly_meeting_figures.py
+plot_figures.py
 
-Create the standard weekly-meeting plots for a single MFDFA seismic run.
+Create the standard plots for a single MFDFA seismic run.
 
 Expected input files in --input-dir:
     acf.csv
