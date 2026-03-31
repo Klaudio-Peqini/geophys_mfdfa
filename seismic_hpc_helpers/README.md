@@ -38,3 +38,11 @@ Includes:
 
 Default behavior:
 - Selects only `_s1` and `_s7` runs (small-shift windows)
+
+**Usage**
+```bash
+bash package_multifractal_analysis_inputs.sh
+```
+
+---
+
