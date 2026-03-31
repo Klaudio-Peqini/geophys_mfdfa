@@ -35,3 +35,6 @@ Packages all relevant outputs for selected runs into a ZIP archive for detailed 
 Includes:
 - CSV/JSON outputs
 - Generated plots
+
+Default behavior:
+- Selects only `_s1` and `_s7` runs (small-shift windows)
