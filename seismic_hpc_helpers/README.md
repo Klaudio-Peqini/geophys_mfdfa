@@ -71,3 +71,14 @@ bash package_delta_h_only.sh
 ```bash
 bash run_plots_all.sh
 ```
+3. Package results:
+```bash
+bash package_multifractal_analysis_inputs.sh
+```
+or (lightweight):
+```bash
+bash package_delta_h_only.sh
+```
+
+---
+
