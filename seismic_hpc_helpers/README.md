@@ -14,3 +14,9 @@ Generates all key plots for a single run directory:
 - Shuffle test summary
 - Windowed h(q)
 
+**Usage**
+```bash
+python3 plot_figures.py --input-dir path/to/run_folder
+```
+
+---
