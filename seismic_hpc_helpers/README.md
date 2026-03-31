@@ -64,3 +64,10 @@ bash package_delta_h_only.sh
 
 ---
 
+## Typical Workflow
+
+1. Run analysis on HPC → generate `scan_outputs/`
+2. Produce plots:
+```bash
+bash run_plots_all.sh
+```
