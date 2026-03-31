@@ -46,3 +46,10 @@ bash package_multifractal_analysis_inputs.sh
 
 ---
 
+### 4. `package_delta_h_only.sh`
+Creates a lightweight ZIP containing only:
+```
+delta_h_h0_h5.csv
+```
+for each selected run, preserving folder structure.
+
