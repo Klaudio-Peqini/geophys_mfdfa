@@ -3,13 +3,13 @@ set -euo pipefail
 
 # Batch plot generator for all run_* folders inside scan_outputs
 # Example usage:
-#   bash run_weekly_meeting_plots_all.sh
-#   bash run_weekly_meeting_plots_all.sh /path/to/scan_outputs
-#   bash run_weekly_meeting_plots_all.sh /path/to/scan_outputs /path/to/plot_weekly_meeting_figures.py
+#   bash run_plots_all.sh
+#   bash run_plots_all.sh /path/to/scan_outputs
+#   bash run_plots_all.sh /path/to/scan_outputs /path/to/plot_weekly_meeting_figures.py
 
 SCAN_OUTPUTS_DIR="${1:-scan_outputs}"
-PLOT_SCRIPT="${2:-$(dirname "$0")/plot_weekly_meeting_figures.py}"
-LOG_FILE="${3:-weekly_meeting_plots_batch.log}"
+PLOT_SCRIPT="${2:-$(dirname "$0")/plot_figures.py}"
+LOG_FILE="${3:-plots_batch.log}"
 
 if [[ ! -d "$SCAN_OUTPUTS_DIR" ]]; then
     echo "Error: scan_outputs directory not found: $SCAN_OUTPUTS_DIR" >&2
