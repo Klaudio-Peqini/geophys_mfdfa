@@ -1,6 +1,6 @@
 # geophysics-multifractal-dfa (pygeomfdfa)                
             
-A research-oriented Python toolkit for **multifractal analysis**, **long-range correlation analysis**, and **scaling diagnostics** applied to:
+A research-oriented Python toolkit for **multifractal analysis**, **long-range correlation analysis**, and **scaling diagnostics** applied to: 
 
 - 🌍 Geomagnetic time series (paleointensity, VADM, RPI, secular variation)
 - 🌋 Seismic catalogs (event counts, magnitudes, energy release, inter-event times)
